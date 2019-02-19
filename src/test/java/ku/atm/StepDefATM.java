@@ -12,11 +12,13 @@ public class StepDefATM {
     ATM atm;
     Bank bank;
     boolean validLogin;
+    boolean ODAccount;
 
     @Before
     public void init() {
         bank = new Bank();
         atm = new ATM(bank);
+        ODAccount = false;
     }
 
     @Given("a customer with id (\\d+) and pin (\\d+) exists")
@@ -27,6 +29,23 @@ public class StepDefATM {
     @Given("a customer with id (\\d+) and pin (\\d+) with balance (.*) exists")
     public void a_customer_with_id_and_pin_with_balance_exists(int id, int pin, double balance) {
         bank.addCustomer(new Customer(id, pin, balance));
+    }
+
+    @Given("a customer OD account with id (\\d+) and pin (\\d+) with balance (.*) and negotitaed amount (.*) exists")
+    public void a_customer_od_account(int id, int pin, double balance, double overAmount){
+        bank.addCustomer(new Customer(id, pin, balance, overAmount));
+        ODAccount = true;
+    }
+
+    @Then("customer id (.*) negotitaed amount is (.+)")
+    public void negotitaed_amount(int id, double overAmount){
+       BankAccount b = bank.findCustomer(id).getAccount();
+       assertEquals(overAmount, b.getOverAmount());
+    }
+
+    @Then("I can not over withdraw because I am non OD account")
+    public void non_OD(){
+        assertFalse(ODAccount);
     }
 
     @When("I login to ATM with id (\\d+) and pin (\\d+)")

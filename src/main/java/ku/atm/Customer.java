@@ -19,6 +19,12 @@ public class Customer {
       account = new BankAccount(currentBalance);
    }
 
+   public Customer(int aNumber, int aPin, double currentBalance, double overAmount){
+      this.customerNumber = aNumber;
+      this.pin = aPin;
+      account = new BankAccount(currentBalance, overAmount);
+   }
+
    public Customer(int aNumber, int aPin) {
       this(aNumber, aPin, 0);
    }
